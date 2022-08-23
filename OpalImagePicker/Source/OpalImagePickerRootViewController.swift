@@ -12,7 +12,7 @@ import Photos
 /// Image Picker Root View Controller contains the logic for selecting images. The images are displayed in a `UICollectionView`, and multiple images can be selected.
 open class OpalImagePickerRootViewController: UIViewController {
     
-    let generator = UIImpactFeedbackGenerator(style: .soft)
+    let generator = UIImpactFeedbackGenerator(style: .medium)
     var height : NSLayoutConstraint!
     var saveStatus : UILabel = {
         let lab = UILabel()
