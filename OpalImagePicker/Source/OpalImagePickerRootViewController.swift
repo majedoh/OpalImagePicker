@@ -292,8 +292,8 @@ open class OpalImagePickerRootViewController: UIViewController {
         saveStatus.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             saveStatus.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
-            saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+            saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
         ])
         height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
         height.isActive = true
@@ -448,6 +448,7 @@ extension OpalImagePickerRootViewController: UICollectionViewDelegate {
             saveStatus.text = text
             saveStatus.backgroundColor = #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 0.9)
             generator.impactOccurred()
+            presnetStatues()
             return false
         }
         return true
