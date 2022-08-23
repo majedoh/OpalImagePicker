@@ -12,6 +12,7 @@ import Photos
 /// Image Picker Root View Controller contains the logic for selecting images. The images are displayed in a `UICollectionView`, and multiple images can be selected.
 open class OpalImagePickerRootViewController: UIViewController {
     
+    let generator = UIImpactFeedbackGenerator(style: .soft)
     var height : NSLayoutConstraint!
     var saveStatus : UILabel = {
         let lab = UILabel()
@@ -286,11 +287,11 @@ open class OpalImagePickerRootViewController: UIViewController {
         navigationItem.rightBarButtonItem = doneButton
         self.doneButton = doneButton
         
-        
+        generator.prepare()
         view.addSubview(saveStatus)
         saveStatus.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            saveStatus.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            saveStatus.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
             saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
         ])
@@ -446,6 +447,7 @@ extension OpalImagePickerRootViewController: UICollectionViewDelegate {
             let text = "The limit is \(maximumSelectionsAllowed) images."
             saveStatus.text = text
             saveStatus.backgroundColor = #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 0.9)
+            generator.impactOccurred()
             return false
         }
         return true
@@ -456,7 +458,7 @@ extension OpalImagePickerRootViewController: UICollectionViewDelegate {
         dismissStatus()
 
         height.isActive = false
-        height = saveStatus.heightAnchor.constraint(equalToConstant: 40)
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 70)
         
         UIView.animate(withDuration: 0.4, animations: { [self] in
             height.isActive = true
