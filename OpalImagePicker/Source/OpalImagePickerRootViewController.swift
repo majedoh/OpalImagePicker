@@ -12,6 +12,21 @@ import Photos
 /// Image Picker Root View Controller contains the logic for selecting images. The images are displayed in a `UICollectionView`, and multiple images can be selected.
 open class OpalImagePickerRootViewController: UIViewController {
     
+    var height : NSLayoutConstraint!
+    var saveStatus : UILabel = {
+        let lab = UILabel()
+        lab.font = UIFont(name: "Dubai-Regular", size: 16)
+        lab.text = "Save Succ"
+        lab.numberOfLines = 1
+        lab.textColor = #colorLiteral(red: 1, green: 1, blue: 0.9999999404, alpha: 1)
+        lab.textAlignment = .center
+        lab.alpha = 0.8
+        lab.layer.cornerRadius = 4
+        lab.clipsToBounds = true
+        return lab
+    }()
+    
+    
     /// Delegate for Image Picker. Notifies when images are selected (done is tapped) or when the Image Picker is cancelled.
     open weak var delegate: OpalImagePickerControllerDelegate?
     
@@ -270,6 +285,19 @@ open class OpalImagePickerRootViewController: UIViewController {
         let doneButton = UIBarButtonItem(title: doneButtonTitle, style: .done, target: self, action: #selector(doneTapped))
         navigationItem.rightBarButtonItem = doneButton
         self.doneButton = doneButton
+        
+        
+        view.addSubview(saveStatus)
+        saveStatus.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            saveStatus.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            saveStatus.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            saveStatus.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+        ])
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+        height.isActive = true
+        
+        
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -415,16 +443,37 @@ extension OpalImagePickerRootViewController: UICollectionViewDelegate {
         let externalCollectionViewItems = self.externalCollectionView?.indexPathsForSelectedItems?.count ?? 0
         
         if maximumSelectionsAllowed <= collectionViewItems + externalCollectionViewItems {
-            //We exceeded maximum allowed, so alert user. Don't allow selection
-            let message = configuration?.maximumSelectionsAllowedMessage ?? NSLocalizedString("You cannot select more than \(maximumSelectionsAllowed) images. Please deselect another image before trying to select again.", comment: "You cannot select more than (x) images. Please deselect another image before trying to select again. (OpalImagePicker)")
-            let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let okayString = configuration?.okayString ?? NSLocalizedString("OK", comment: "OK")
-            let action = UIAlertAction(title: okayString, style: .cancel, handler: nil)
-            alert.addAction(action)
-            present(alert, animated: true, completion: nil)
+            let text = "The limit is \(maximumSelectionsAllowed) images."
+            saveStatus.text = text
+            saveStatus.backgroundColor = #colorLiteral(red: 1, green: 0.3098039216, blue: 0.2666666667, alpha: 0.9)
             return false
         }
         return true
+    }
+    
+    
+    func presnetStatues(){
+        dismissStatus()
+
+        height.isActive = false
+        height = saveStatus.heightAnchor.constraint(equalToConstant: 40)
+        
+        UIView.animate(withDuration: 0.4, animations: { [self] in
+            height.isActive = true
+            view.layoutIfNeeded()
+        })
+    }
+    
+    func dismissStatus(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000), execute: { [self] in
+            height.isActive = false
+            height = saveStatus.heightAnchor.constraint(equalToConstant: 0)
+            UIView.animate(withDuration: 0.4, animations: { [self] in
+                height.isActive = true
+                view.layoutIfNeeded()
+            })
+            
+        })
     }
 }
 
